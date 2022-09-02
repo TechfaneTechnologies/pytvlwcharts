@@ -22,7 +22,7 @@ setup(
     author_email=about["__author_email__"],
     url=about["__url__"],
     download_url=about["__download_url__"],
-    license=f'{about["__license__"][0]}{about["__license__"][-1]}',
+    license=f'{about["__license__"][0]}, {about["__license__"][-1]}',
     packages=["pytvlwcharts"],
     classifiers=[
         "Development Status :: 1 - Development/Alpha",
