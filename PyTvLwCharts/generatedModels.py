@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     generated_models.py
-    An Experimental Python Wrapper For Tradingview's Lightweight-Charts
+    An Experimental Python Wrapper For Tradingview's Lightweight-Charts To Be Used In Notebook Environments.
     Generated With generateTypes.py. DO NOT MODIFY
     :url: https://tradingview.github.io/lightweight-charts/
     :copyright: (c) 2021 by Techfane Technologies Pvt. Ltd.
