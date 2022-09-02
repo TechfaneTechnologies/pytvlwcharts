@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     generateTypes.py
-    An Experimental Python Wrapper For Tradingview's Lightweight-Charts
+    An Experimental Python Wrapper For Tradingview's Lightweight-Charts To Be Used In Notebook Environments.
     A tool to generate type definitions for all the charting options.
     :url: https://tradingview.github.io/lightweight-charts/
     :copyright: (c) 2021 by Techfane Technologies Pvt. Ltd.
@@ -36,7 +36,7 @@ _FLAG_SCHEMA = flags.DEFINE_string('schema',
 _CONTENT_TEMPLATE = jinja2.Template(
     '''"""
     generatedModels.py
-    An Experimental Python Wrapper For Tradingview's Lightweight-Charts
+    An Experimental Python Wrapper For Tradingview's Lightweight-Charts To Be Used In Notebook Environments.
     Generated With generateTypes.py. DO NOT MODIFY
     :url: https://tradingview.github.io/lightweight-charts/
     :copyright: (c) 2021 by Techfane Technologies Pvt. Ltd.
