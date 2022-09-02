@@ -14,4 +14,4 @@ __github__ = "https://github.com/TechfaneTechnologies/PyTvLwCharts"
 __license__ = "MIT"
 
 from .tvlwcharts import Chart
-from .generated_models import *
+from .generatedModels import *
