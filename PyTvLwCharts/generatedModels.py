@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    generated_models.py
+    generatedModels.py
     An Experimental Python Wrapper For Tradingview's Lightweight-Charts
     Generated With generateTypes.py. DO NOT MODIFY
     :url: https://tradingview.github.io/lightweight-charts/
