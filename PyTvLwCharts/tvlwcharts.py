@@ -13,7 +13,7 @@ __webpage__ = "https://github.com/MooneDrJune"
 __github__ = "https://github.com/TechfaneTechnologies/PyTvLwCharts"
 __license__ = "MIT"
 
-from .generated_models import *
+from .generatedModels import *
 
 import copy
 import dataclasses
