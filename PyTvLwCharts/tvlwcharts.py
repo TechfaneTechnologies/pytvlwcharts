@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     tvlwcharts.py
-    An Experimental Python Wrapper For Tradingview's Lightweight-Charts
+    An Experimental Python Wrapper For Tradingview's Lightweight-Charts To Be Used In Notebook Environments.
     :url: https://tradingview.github.io/lightweight-charts/
     :copyright: (c) 2021 by Techfane Technologies Pvt. Ltd.
     :license: see LICENSE for details.
@@ -13,7 +13,7 @@ __webpage__ = "https://github.com/MooneDrJune"
 __github__ = "https://github.com/TechfaneTechnologies/PyTvLwCharts"
 __license__ = "MIT"
 
-from .generated_models import *
+from .generatedModels import *
 
 import copy
 import dataclasses
