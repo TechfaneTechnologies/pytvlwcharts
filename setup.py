@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import io
 import os
 from codecs import open
