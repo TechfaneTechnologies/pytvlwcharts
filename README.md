@@ -18,7 +18,7 @@ Please Refer [pytvlwcharts.ipynb](https://github.com/TechfaneTechnologies/pytvlw
 
 ![image](https://user-images.githubusercontent.com/68828793/188259987-b5976ef1-5c83-4f2f-a937-c83c53fec791.png)
 
-![image](https://user-images.githubusercontent.com/68828793/188259991-88518940-87f4-4981-8d33-9ee1d92cffc4.png)
+![image](https://user-images.githubusercontent.com/96371033/188273414-83a7ea6a-90ad-4f6a-90da-07c277abf2ff.png)
 
 ## License
 
