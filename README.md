@@ -14,7 +14,7 @@ Please Refer [pytvlwcharts.ipynb](https://github.com/TechfaneTechnologies/pytvlw
 ## Screen Shots
 https://youtu.be/zQKB9_bMkfM
 
-![image](https://user-images.githubusercontent.com/96371033/188298548-f7fc4656-dc9c-4550-b1c2-ba8bbc1a73b3.png)
+![image](https://user-images.githubusercontent.com/96371033/188302874-25dea27f-07c5-4723-810a-65d51e8b70fd.png)
 
 ![image](https://user-images.githubusercontent.com/96371033/188294528-73ddaf9e-55b2-491e-bfba-2733a9361994.png)
 
