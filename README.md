@@ -20,6 +20,15 @@ Please Refer [pytvlwcharts.ipynb](https://github.com/TechfaneTechnologies/pytvlw
 
 ![image](https://user-images.githubusercontent.com/96371033/188273414-83a7ea6a-90ad-4f6a-90da-07c277abf2ff.png)
 
+![image](https://user-images.githubusercontent.com/96371033/188295701-e48861e7-68d3-47ad-ad7a-f0f4f4f49e11.png)
+
+![image](https://user-images.githubusercontent.com/96371033/188295727-98a79ce0-7d3a-4608-96cf-d4551aca3ef6.png)
+
+![image](https://user-images.githubusercontent.com/96371033/188295706-dc566287-b651-4bf9-a37f-37682828259e.png)
+
+![image](https://user-images.githubusercontent.com/96371033/188295711-3b29da01-65ba-45c4-a05e-b1d0fbe0eef8.png)
+
+
 ## License
 
 Licensed under either of
