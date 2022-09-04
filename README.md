@@ -12,9 +12,9 @@ Install The `pytvlwcharts` Library Via `pip install -U git+https://github.com/Te
 Please Refer [pytvlwcharts.ipynb](https://github.com/TechfaneTechnologies/pytvlwcharts/blob/main/pytvlwcharts.ipynb) for usage details.
 
 ## Screen Shots
-![image](https://user-images.githubusercontent.com/96371033/188243907-e12f6a38-6ae1-4cbe-b010-7bbc72026726.png)
+![image](https://user-images.githubusercontent.com/96371033/188294528-73ddaf9e-55b2-491e-bfba-2733a9361994.png)
 
-![image](https://user-images.githubusercontent.com/96371033/188244006-e72348bf-037f-4771-be9e-8aa5e5169457.png)
+![image](https://user-images.githubusercontent.com/96371033/188294553-ac8ec934-251e-4fe9-a30c-d40f63d5f9f6.png)
 
 ![image](https://user-images.githubusercontent.com/68828793/188259987-b5976ef1-5c83-4f2f-a937-c83c53fec791.png)
 
