@@ -49,7 +49,7 @@ _TEMPLATE = jinja2.Template("""
        chart_series.createPriceLine({{ price_line }});
        chart.subscribeCrosshairMove(param => {
            if (param.time) console.log(param.seriesPrices.get(chart_series))
-        })
+        });
        {% endfor %}
      })();
      {% endfor %}
