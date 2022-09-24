@@ -103,7 +103,7 @@ class _Markers:
     return [{
         **self.options,
         **marker
-    } for marker in self._data.to_dict(orient='records', date_format='iso')]
+    } for marker in self._data.to_dict(orient='records')]
 
   def _repr_html_(self):
     return self._chart._repr_html_()
@@ -136,7 +136,7 @@ class Series:
     markers = _Markers(chart=self._chart,
                        data=data if data is not None else self._data,
                        **kwargs)
-    self.markers.append(markers)
+    self._markers.append(markers)
     return markers
 
   def _spec(self) -> _SeriesSpec:
