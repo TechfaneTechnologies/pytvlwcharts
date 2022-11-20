@@ -54,9 +54,9 @@ _TEMPLATE = jinja2.Template("""
      })();
      {% endfor %}
       // Make prices fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
+      // document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
       // Make legend fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+      // document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
      })();
    </script>
 """)
