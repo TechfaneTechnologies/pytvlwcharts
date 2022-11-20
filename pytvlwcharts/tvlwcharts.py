@@ -47,9 +47,9 @@ _TEMPLATE = jinja2.Template("""
        );
        {% for price_line in series.price_lines %}
        chart_series.createPriceLine({{ price_line }});
-       chart.subscribeCrosshairMove(param => {
-           if (param.time) console.log(param.seriesPrices.get(chart_series))
-        });
+       // chart.subscribeCrosshairMove(param => {
+       //   if (param.time) console.log(param.seriesPrices.get(chart_series))
+       // });
        {% endfor %}
      })();
      {% endfor %}
