@@ -50,6 +50,7 @@ _TEMPLATE = jinja2.Template("""
        // chart.subscribeCrosshairMove(param => {
        //   if (param.time) console.log(param.seriesPrices.get(chart_series))
        // });
+       chart.timeScale().fitContent();
        {% endfor %}
      })();
      {% endfor %}
