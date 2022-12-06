@@ -47,17 +47,17 @@ _TEMPLATE = jinja2.Template("""
        );
        {% for price_line in series.price_lines %}
        chart_series.createPriceLine({{ price_line }});
-       // chart.subscribeCrosshairMove(param => {
-       //   if (param.time) console.log(param.seriesPrices.get(chart_series))
-       // });
-       chart.timeScale().fitContent();
        {% endfor %}
+       chart.timeScale().fitContent();
+       chart.subscribeCrosshairMove(param => {
+          if (param.time) console.log(param.seriesPrices.get(chart_series))
+       });
      })();
      {% endfor %}
       // Make prices fully visible
-      // document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
       // Make legend fully visible
-      // document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
      })();
    </script>
 """)
@@ -180,7 +180,7 @@ class Chart:
                options: Optional[ChartOptions] = None):
     self.options = copy.deepcopy(options) if options else ChartOptions()
     self.series = []
-    self._data = data
+    self._data = data.drop_duplicates(subset=['time']) if data is not None else data
 
     # Set Options Overrides.
     self.options.width = width
@@ -221,7 +221,7 @@ class Chart:
     return self.add(
         Series(chart=self,
                series_type='Line',
-               data=data if data is not None else self._data,
+               data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
   def mark_area(self, data: pd.DataFrame = None, **kwargs) -> Series:
@@ -229,7 +229,7 @@ class Chart:
     return self.add(
         Series(chart=self,
                series_type='Area',
-               data=data if data is not None else self._data,
+               data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
   def mark_bar(self, data: pd.DataFrame = None, **kwargs) -> Series:
@@ -237,7 +237,7 @@ class Chart:
     return self.add(
         Series(chart=self,
                series_type='Bar',
-               data=data if data is not None else self._data,
+               data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
   def mark_candlestick(self, data: pd.DataFrame = None, **kwargs) -> Series:
@@ -245,7 +245,7 @@ class Chart:
     return self.add(
         Series(chart=self,
                series_type='Candlestick',
-               data=data if data is not None else self._data,
+               data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
   def mark_histogram(self, data: pd.DataFrame = None, **kwargs) -> Series:
@@ -253,7 +253,7 @@ class Chart:
     return self.add(
         Series(chart=self,
                series_type='Histogram',
-               data=data if data is not None else self._data,
+               data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
   def _spec(self) -> _ChartSpec:
