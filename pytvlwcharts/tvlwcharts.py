@@ -26,20 +26,31 @@ import uuid
 from typing import Dict, Optional, List
 
 _TEMPLATE = jinja2.Template("""
-<script src="{{ base_url }}lightweight-charts.standalone.production.js"></script>
-<div id="{{ output_div }}"></div>
-<script type="text/javascript">
-(() => {
-    const outputDiv = document.getElementById("{{ output_div }}");
-    const chart = LightweightCharts.createChart(outputDiv, { { chart.options } });
-
-    { % for series in chart.series % }
+   <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
+   
+   <div id="{{ output_div }}"></div>
+   <script type="text/javascript">
     (() => {
-        const chart_series = chart.add { { series.series_type } } Series({ { series.options } });
-        chart_series.setData({ { series.data } });
-        chart_series.setMarkers({ { series.markers } }); { % for price_line in series.price_lines % }
-        chart_series.createPriceLine({ { price_line } }); { % endfor % }
+    const outputDiv = document.getElementById("{{ output_div }}");
+    const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
+    {% for series in chart.series %}
+    (() => {
+        const chart_series = chart.add{{ series.series_type }}Series(
+            {{ series.options }}
+        );
+        chart_series.setData(
+            {{ series.data }}
+        );
+        chart_series.setMarkers(
+            {{ series.markers }}
+        );
+        {% for price_line in series.price_lines %}
+        chart_series.createPriceLine({{ price_line }});
+        {% endfor %}
         chart.timeScale().fitContent();
+        chart.subscribeCrosshairMove(param => {
+            if (param.time) console.log(param.seriesPrices.get(chart_series))
+        });
         const addLegentToChart = (chart, lineChart) => {
             const setLegendText = (legend, priceValue) => {
                 let val = 'n/a';
@@ -82,17 +93,15 @@ _TEMPLATE = jinja2.Template("""
                 setLegendText(legend, param.seriesPrices.get(lineChart));
             });
         };
-    })(); { % endfor % }
-    // Make prices fully visible
-    document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div")
-        .style["left"] = "-30px";
-    // Make legend fully visible
-    document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div")
-        .style["left"] = "-30px";
-})();
-</script>
+     })();
+     {% endfor %}
+      // Make prices fully visible
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
+      // Make legend fully visible
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+     })();
+   </script>
 """)
-
 
 # Initiate Model Specification.
 @dataclasses.dataclass
