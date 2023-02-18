@@ -49,48 +49,45 @@ _TEMPLATE = jinja2.Template("""
        chart_series.createPriceLine({{ price_line }});
        {% endfor %}
        chart.timeScale().fitContent();
-        const addLegentToChart = (chart, lineChart) => {
-            const setLegendText = (legend, priceValue) => {
-                let val = 'n/a';
-                const legendColor = '#DDD';
-                if (priceValue !== undefined) {
-                    if (isNaN(priceValue)) {
-                        keys = Object.keys(priceValue);
-                        nextKeys = keys.slice(1);
-                        val = nextKeys.reduce(
-                            (p, c) => `${p}, ${c}: ${priceValue[c]}`,
-                            `${keys[0]}: ${priceValue[keys[0]]}`)
-                    } else {
-                        val = (Math.round(priceValue * 100) / 100)
-                            .toFixed(2);
-                    }
+       const addLegentToChart = (chart, lineChart) => {
+         const setLegendText = (legend, priceValue) => {
+           let val = 'n/a';
+           const legendColor = '#DDD';
+           if (priceValue !== undefined) {
+             if (isNaN(priceValue)) {
+               keys = Object.keys(priceValue);
+                nextKeys = keys.slice(1);
+                 val = nextKeys.reduce(
+                    (p, c) => `${p}, ${c}: ${priceValue[c]}`,
+                     `${keys[0]}: ${priceValue[keys[0]]}`)
+                } else {
+                    val = (Math.round(priceValue * 100) / 100)
+                        .toFixed(2);
                 }
-
-                legend.innerHTML = `
-                <div>
-                    <p>
-                        <span style="color:${legendColor}">InstrumentData</span>
-                        <span style="color:${legendColor}">${val}</span>
-                    </p>
-                </div>`;
             }
 
-            const createLegentDiv = (lineIndex) => {
-                var legend = document.createElement('div');
-                legend.className = 'line-legend';
-                legend.style.top = (1.5 * lineIndex) + 'em';
-                return legend;
-            };
+         legend.innerHTML = `
+            <div>
+                <p>
+                    <span style="color:${legendColor}">InstrumentData</span>
+                    <span style="color:${legendColor}">${val}</span>
+                </p>
+            </div>`;
+       }
 
-            const legend = createLegentDiv(0)
-            chartContainer.appendChild(legend);
-
-            setLegendText(legend)
-
-            chart.subscribeCrosshairMove((param) => {
-                setLegendText(legend, param.seriesPrices.get(lineChart));
-            });
-        };
+       const createLegentDiv = (lineIndex) => {
+         var legend = document.createElement('div');
+         legend.className = 'line-legend';
+         legend.style.top = (1.5 * lineIndex) + 'em';
+         return legend;
+       };
+       const legend = createLegentDiv(0)
+       chartContainer.appendChild(legend);
+       setLegendText(legend)
+       chart.subscribeCrosshairMove((param) => {
+         setLegendText(legend, param.seriesPrices.get(lineChart));
+       });
+     };
      })();
      {% endfor %}
       // Make prices fully visible
