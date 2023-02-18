@@ -30,69 +30,27 @@ _TEMPLATE = jinja2.Template("""
    
    <div id="{{ output_div }}"></div>
    <script type="text/javascript">
-    (() => {
-    const outputDiv = document.getElementById("{{ output_div }}");
-    const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
-    {% for series in chart.series %}
-    (() => {
-        const chart_series = chart.add{{ series.series_type }}Series(
-            {{ series.options }}
-        );
-        chart_series.setData(
-            {{ series.data }}
-        );
-        chart_series.setMarkers(
-            {{ series.markers }}
-        );
-        {% for price_line in series.price_lines %}
-        chart_series.createPriceLine({{ price_line }});
-        {% endfor %}
-        chart.timeScale().fitContent();
-        chart.subscribeCrosshairMove(param => {
-            if (param.time) console.log(param.seriesPrices.get(chart_series))
-        });
-        const addLegentToChart = (chart, lineChart) => {
-            const setLegendText = (legend, priceValue) => {
-                let val = 'n/a';
-                const legendColor = '#DDD';
-                if (priceValue !== undefined) {
-                    if (isNaN(priceValue)) {
-                        keys = Object.keys(priceValue);
-                        nextKeys = keys.slice(1);
-                        val = nextKeys.reduce(
-                            (p, c) => `${p}, ${c}: ${priceValue[c]}`,
-                            `${keys[0]}: ${priceValue[keys[0]]}`)
-                    } else {
-                        val = (Math.round(priceValue * 100) / 100)
-                            .toFixed(2);
-                    }
-                }
-
-                legend.innerHTML = `
-                <div>
-                    <p>
-                        <span style="color:${legendColor}">InstrumentData</span>
-                        <span style="color:${legendColor}">${val}</span>
-                    </p>
-                </div>`;
-            }
-
-            const createLegentDiv = (lineIndex) => {
-                var legend = document.createElement('div');
-                legend.className = 'line-legend';
-                legend.style.top = (1.5 * lineIndex) + 'em';
-                return legend;
-            };
-
-            const legend = createLegentDiv(0)
-            chartContainer.appendChild(legend);
-
-            setLegendText(legend)
-
-            chart.subscribeCrosshairMove((param) => {
-                setLegendText(legend, param.seriesPrices.get(lineChart));
-            });
-        };
+     (() => {
+     const outputDiv = document.getElementById("{{ output_div }}");
+     const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
+     {% for series in chart.series %}
+     (() => {
+       const chart_series = chart.add{{ series.series_type }}Series(
+         {{ series.options }}
+       );
+       chart_series.setData(
+         {{ series.data }}
+       );
+       chart_series.setMarkers(
+         {{ series.markers }}
+       );
+       {% for price_line in series.price_lines %}
+       chart_series.createPriceLine({{ price_line }});
+       {% endfor %}
+       chart.timeScale().fitContent();
+       chart.subscribeCrosshairMove(param => {
+          if (param.time) console.log(param.seriesPrices.get(chart_series))
+       });
      })();
      {% endfor %}
       // Make prices fully visible
