@@ -71,7 +71,7 @@ _TEMPLATE = jinja2.Template("""
 <body>
    <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <div id="{{ output_div }}">
+   <div id="{{ output_div }}" style="position: absolute; width: 100%; height: 100%">
      <div class="lw-attribution">
        <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
      </div>
@@ -131,6 +131,67 @@ _TEMPLATE = jinja2.Template("""
 </html>
 """)
 
+_TEMPLATES = jinja2.Template("""
+   <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
+   <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   <div id="{{ output_div }}">
+     <div class="lw-attribution">
+       <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
+     </div>
+   </div>
+   <script type="text/javascript">
+     (() => {
+     const outputDiv = document.getElementById("{{ output_div }}");
+     const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
+     {% for series in chart.series %}
+     (() => {
+       const chart_series_{{ series.series_name }} = chart.add{{ series.series_type }}Series(
+         {{ series.options }}
+       );
+       chart_series_{{ series.series_name }}.setData(
+         {{ series.data }}
+       );
+       chart_series_{{ series.series_name }}.setMarkers(
+         {{ series.markers }}
+       );
+       {% for price_line in series.price_lines %}
+       chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
+       {% endfor %}
+       this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
+       chart.timeScale().fitContent();
+       window.addEventListener("resize", () => {
+         chart.resize(window.innerWidth, window.innerHeight);
+       });
+       chart.subscribeClick(function (param) {
+         console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+       });
+       chart.unsubscribeClick(function (param) {
+         // Don’t get notified when a mouse clicks on a chart
+       });
+       chart.subscribeCrosshairMove(function (param) {
+         if (!param.point) {
+           return;
+         }
+         if (param.time) {
+           const volume = param.seriesPrices.get(chart_series_volume)
+           const ohlc = param.seriesPrices.get(chart_series_ohlc)
+           const dateFormat = new Date(param.time * 1000)
+           const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
+           document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
+         } else {
+             console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+         }
+       });
+     })();
+     {% endfor %}
+      // Make prices fully visible
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
+      // Make legend fully visible
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+     })();
+   </script>
+""")
+
 # Initiate Model Specification.
 @dataclasses.dataclass
 class _SeriesSpec:
@@ -148,11 +209,16 @@ class _ChartSpec:
   series: List[_SeriesSpec]
 
 
-def _render(chart: _ChartSpec,
+def _render(serve: bool,
+            chart: _ChartSpec,
             base_url: str = "https://unpkg.com/lightweight-charts/dist/",
             output_div: str = "vis") -> str:
   """Render a model as html for viewing."""
-  return _TEMPLATE.render(chart=chart, base_url=base_url, output_div=output_div)
+  return (
+      _TEMPLATE.render(chart=chart, base_url=base_url, output_div=output_div)
+      if serve
+      else _TEMPLATES.render(chart=chart, base_url=base_url, output_div=output_div)
+  )
 
 
 def _encode(data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -232,6 +298,7 @@ class Chart:
   """A Lightweight Chart."""
 
   def __init__(self,
+               serve: bool = False,
                data: pd.DataFrame = None,
                width: int = 400,
                height: int = 300,
@@ -252,7 +319,7 @@ class Chart:
     self.options = copy.deepcopy(options) if options else ChartOptions()
     self.series = []
     self._data = data.drop_duplicates(subset=['time']) if data is not None else data
-
+    self.serve = serve
     # Set Options Overrides.
     self.options.width = width
     self.options.height = height
@@ -337,4 +404,4 @@ class Chart:
                       series=[series._spec() for series in self.series])
 
   def _repr_html_(self):
-    return _render(self._spec(), output_div=f'vis-{uuid.uuid4().hex}')
+    return _render(self.serve, self._spec(), output_div=f'vis-{uuid.uuid4().hex}')
