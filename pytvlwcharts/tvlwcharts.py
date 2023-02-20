@@ -28,7 +28,7 @@ from typing import Dict, Optional, List
 _TEMPLATE = jinja2.Template("""
    <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <div id="{{ output_div }}">
+   <div id="{{ output_div }} style="position: absolute; width: 100%; height: 100%">
      <div class="lw-attribution">
        <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
      </div>
