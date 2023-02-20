@@ -46,42 +46,25 @@ _TEMPLATE = jinja2.Template("""
         /* Add a background color to match the chart */
         background-color: #222;
       }
-
-      /* Styles for attribution message */
-      .lw-attribution {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        z-index: 3; /* place above the charts */
-        padding: 10px 0px 0px 12px;
-        font-family: "Roboto", sans-serif;
-        font-size: 0.8em;
-      }
-      .lw-attribution a {
-        cursor: pointer;
-        color: rgb(54, 116, 217);
-        opacity: 0.8;
-      }
-      .lw-attribution a:hover {
-        color: rgb(54, 116, 217);
-        opacity: 1;
-      }
     </style>
 </head>
 <body>
-   <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
-   <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <div id="{{ output_div }}" style="position: absolute; width: 100%; height: 100%">
-     <div class="lw-attribution">
-       <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
-     </div>
-   </div>
+   <div id="{{ output_div }}" style="position: absolute; width: 100%; height: 100%"></div>
    <script type="text/javascript">
      (() => {
      const outputDiv = document.getElementById("{{ output_div }}");
      const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
+     this.chart = chart;
+     const container = document.getElementById("{{ output_div }}");
+     const legend = document.createElement('div');
+     legend.style = `position: absolute; left: 10px; top: 10px; z-index: 1; font-size: 10px; font-family: sans-serif; line-height: 14px; font-weight: 200;`;
+     container.appendChild(legend);
      {% for series in chart.series %}
      (() => {
+       const row_{{ series.series_name }} = document.createElement('div');
+       row_{{ series.series_name }}.innerHTML = '<a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>';
+       row_{{ series.series_name }}.style.color = 'orange';
+       legend.appendChild(row_{{ series.series_name }});
        const chart_series_{{ series.series_name }} = chart.add{{ series.series_type }}Series(
          {{ series.options }}
        );
@@ -95,37 +78,74 @@ _TEMPLATE = jinja2.Template("""
        chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
        {% endfor %}
        this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
-     })();
-     {% endfor %}
-      chart.timeScale().fitContent();
-      chart.subscribeClick(function (param) {
-        console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-      });
-      chart.unsubscribeClick(function (param) {
-        // Don’t get notified when a mouse clicks on a chart
-      });
-      chart.subscribeCrosshairMove(function (param) {
+       chart.subscribeClick(function (param) {
+         console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+       });
+       chart.unsubscribeClick(function (param) {
+         // Don’t get notified when a mouse clicks on a chart
+       });
+       chart.subscribeCrosshairMove(param => {
         if (!param.point) {
           return;
         }
         if (param.time) {
-          const volume = param.seriesPrices.get(chart_series_volume)
-          const ohlc = param.seriesPrices.get(chart_series_ohlc)
-          const dateFormat = new Date(param.time * 1000)
-          const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
-          document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
-        } else {
-            console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-        }
-      });
-      // Make prices fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
-      // Make legend fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px";
+           const data = param.seriesData.get(chart_series_{{ series.series_name }});
+           if ('{{ series.series_name }}' === 'ohlc') {
+             const open = data.open !== undefined ? data.open : data.value;
+             const high = data.high !== undefined ? data.high : data.value;
+             const low = data.low !== undefined ? data.low : data.value;
+             const close = data.close !== undefined ? data.close : data.value;
+             row_{{ series.series_name }}.innerHTML = `<strong>open: ${open.toFixed(2)} | high: ${high.toFixed(2)} | low: ${low.toFixed(2)} | close: ${close.toFixed(2)}</strong>`;
+           } else {
+             const price = data.value !== undefined ? data.value : data.close;
+             row_{{ series.series_name }}.innerHTML = `<strong>{{ series.series_name }}: ${price.toFixed(2)}`;
+           }         
+         } else {
+             console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+         }
+       });
+       chart.timeScale().fitContent();
+     })();
+     {% endfor %}
       window.addEventListener("resize", () => {
-        chart.resize(window.innerWidth, window.innerHeight);
+        this.chart.resize(window.innerWidth, window.innerHeight);
       });
      })();
+      function updateData() {
+          try {
+              return axios({
+                      method: 'GET',
+                      url: document.location.href.replace('chart','data'),
+                      crossOrigin: '*',
+                  })
+                  .then(response => {
+                      {% for series in chart.series %}
+                      this.chart_series_{{ series.series_name }}.update(response.data.{{ series.series_name }}[0])
+                      {% endfor %}
+                  })
+          } catch (error) {
+              throw {
+                  code: error.code,
+                  message: error.message,
+                  responseStatus: error.response ? error.status : null,
+                  url: url,
+              };
+          }
+      }
+      function setDataUpdateInterval()
+      {
+          var currentDateSeconds = new Date().getSeconds();
+          if (currentDateSeconds == 0) {
+              setInterval(updateData, 60000);
+          }
+          else {
+              setTimeout(function () {
+                  setMyFunctionInterval();
+              }, (60 - currentDateSeconds) * 1000);
+          }
+          updateData();
+      }
+      setDataUpdateInterval();
    </script>
 </body>
 </html>
@@ -139,8 +159,17 @@ _TEMPLATES = jinja2.Template("""
      (() => {
      const outputDiv = document.getElementById("{{ output_div }}");
      const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
+     this.chart = chart;
+     const container = document.getElementById("{{ output_div }}");
+     const legend = document.createElement('div');
+     legend.style = `position: absolute; left: 10px; top: 10px; z-index: 1; font-size: 10px; font-family: sans-serif; line-height: 14px; font-weight: 200;`;
+     container.appendChild(legend);
      {% for series in chart.series %}
      (() => {
+       const row_{{ series.series_name }} = document.createElement('div');
+       row_{{ series.series_name }}.innerHTML = '<a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>';
+       row_{{ series.series_name }}.style.color = 'orange';
+       legend.appendChild(row_{{ series.series_name }});
        const chart_series_{{ series.series_name }} = chart.add{{ series.series_type }}Series(
          {{ series.options }}
        );
@@ -154,24 +183,37 @@ _TEMPLATES = jinja2.Template("""
        chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
        {% endfor %}
        this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
+       chart.subscribeClick(function (param) {
+         console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+       });
+       chart.unsubscribeClick(function (param) {
+         // Don’t get notified when a mouse clicks on a chart
+       });
+       chart.subscribeCrosshairMove(param => {
+        if (!param.point) {
+          return;
+        }
+        if (param.time) {
+           const data = param.seriesData.get(chart_series_{{ series.series_name }});
+           if ('{{ series.series_name }}' === 'ohlc') {
+             const open = data.open !== undefined ? data.open : data.value;
+             const high = data.high !== undefined ? data.high : data.value;
+             const low = data.low !== undefined ? data.low : data.value;
+             const close = data.close !== undefined ? data.close : data.value;
+             row_{{ series.series_name }}.innerHTML = `<strong>open: ${open.toFixed(2)} | high: ${high.toFixed(2)} | low: ${low.toFixed(2)} | close: ${close.toFixed(2)}</strong>`;
+           } else {
+             const price = data.value !== undefined ? data.value : data.close;
+             row_{{ series.series_name }}.innerHTML = `<strong>{{ series.series_name }}: ${price.toFixed(2)}`;
+           }         
+         } else {
+             console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+         }
+       });
+       chart.timeScale().fitContent();
      })();
      {% endfor %}
-      chart.timeScale().fitContent();
-      chart.subscribeClick(function (param) {
-        console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-      });
-      chart.unsubscribeClick(function (param) {
-        // Don’t get notified when a mouse clicks on a chart
-      });
-      chart.subscribeCrosshairMove(function (param) {
-        console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-      });
-      // Make prices fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
-      // Make legend fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px";
       window.addEventListener("resize", () => {
-        chart.resize(window.innerWidth, window.innerHeight);
+        this.chart.resize(window.innerWidth, window.innerHeight);
       });
      })();
    </script>
