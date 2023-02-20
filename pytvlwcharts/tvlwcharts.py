@@ -26,9 +26,52 @@ import uuid
 from typing import Dict, Optional, List
 
 _TEMPLATE = jinja2.Template("""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <title>Lightweight Charts Customization Tutorial</title>
+    <!-- Adding Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+    <!-- Adding the standalone version of Lightweight charts -->
+    <script type="text/javascript" src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+        padding: 0;
+        margin: 0;
+        /* Add a background color to match the chart */
+        background-color: #222;
+      }
+
+      /* Styles for attribution message */
+      .lw-attribution {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 3; /* place above the charts */
+        padding: 10px 0px 0px 12px;
+        font-family: "Roboto", sans-serif;
+        font-size: 0.8em;
+      }
+      .lw-attribution a {
+        cursor: pointer;
+        color: rgb(54, 116, 217);
+        opacity: 0.8;
+      }
+      .lw-attribution a:hover {
+        color: rgb(54, 116, 217);
+        opacity: 1;
+      }
+    </style>
+</head>
+<body>
    <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <div id="{{ output_div }} style="position: absolute; width: 100%; height: 100%">
+   <div id="{{ output_div }}">
      <div class="lw-attribution">
        <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
      </div>
@@ -39,19 +82,19 @@ _TEMPLATE = jinja2.Template("""
      const chart = LightweightCharts.createChart(outputDiv, {{ chart.options }});
      {% for series in chart.series %}
      (() => {
-       const chart_series_{{ series.title }} = chart.add{{ series.series_type }}Series(
+       const chart_series_{{ series.series_name }} = chart.add{{ series.series_type }}Series(
          {{ series.options }}
        );
-       chart_series_{{ series.title }}.setData(
+       chart_series_{{ series.series_name }}.setData(
          {{ series.data }}
        );
-       chart_series_{{ series.title }}.setMarkers(
+       chart_series_{{ series.series_name }}.setMarkers(
          {{ series.markers }}
        );
        {% for price_line in series.price_lines %}
-       chart_series_{{ series.title }}.createPriceLine({{ price_line }});
+       chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
        {% endfor %}
-       this.chart_series_{{ series.title }} = chart_series_{{ series.title }};
+       this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
        chart.timeScale().fitContent();
        window.addEventListener("resize", () => {
          chart.resize(window.innerWidth, window.innerHeight);
@@ -67,15 +110,8 @@ _TEMPLATE = jinja2.Template("""
            return;
          }
          if (param.time) {
-           // const price = param.seriesPrices.get(this.series)
-           // row.innerText = 'String' + '  ' + price.toFixed(2)
-           // const volume = param.hoveredSeries.get(this.volumeSeries)
-           if (chart_series_{{ series.title }} === 'chart_series_Volume') {
-             const volume = param.seriesPrices.get(chart_series_Volume)
-           }
-           if ( {{ series.series_type }} === 'Candlestick') {
-             const ohlc = param.seriesPrices.get(chart_series_{{ series.title }})
-           }
+           const volume = param.seriesPrices.get(chart_series_volume)
+           const ohlc = param.seriesPrices.get(chart_series_ohlc)
            const dateFormat = new Date(param.time * 1000)
            const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
            document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
@@ -91,11 +127,14 @@ _TEMPLATE = jinja2.Template("""
       document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
      })();
    </script>
+</body>
+</html>
 """)
 
 # Initiate Model Specification.
 @dataclasses.dataclass
 class _SeriesSpec:
+  series_name: str 
   series_type: str
   data: str
   options: str
@@ -146,8 +185,9 @@ class _Markers:
 
 class Series:
 
-  def __init__(self, chart, data: pd.DataFrame, series_type: str, **kwargs):
+  def __init__(self, chart, data: pd.DataFrame, series_name: str, series_type: str, **kwargs):
     self._chart = chart
+    self.series_name = series_name
     self.series_type = series_type
     self._data = data
     self.options = kwargs
@@ -176,6 +216,7 @@ class Series:
 
   def _spec(self) -> _SeriesSpec:
     return _SeriesSpec(
+        series_name=self.series_name,
         series_type=self.series_type,
         data=self._data.to_json(orient='records', date_format='iso'),
         options=json.dumps(self.options),
@@ -246,42 +287,47 @@ class Chart:
     self.series.append(series)
     return series
 
-  def mark_line(self, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_line(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Line Series."""
     return self.add(
         Series(chart=self,
+               series_name=series_name,
                series_type='Line',
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_area(self, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_area(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
     """Add An Area Series."""
     return self.add(
         Series(chart=self,
+               series_name=series_name,
                series_type='Area',
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_bar(self, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_bar(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Bar Series."""
     return self.add(
         Series(chart=self,
+               series_name=series_name,
                series_type='Bar',
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_candlestick(self, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_candlestick(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Candlestick series."""
     return self.add(
         Series(chart=self,
+               series_name=series_name,
                series_type='Candlestick',
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_histogram(self, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_histogram(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Histogram Series."""
     return self.add(
         Series(chart=self,
+               series_name=series_name,
                series_type='Histogram',
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
