@@ -95,36 +95,36 @@ _TEMPLATE = jinja2.Template("""
        chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
        {% endfor %}
        this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
-       chart.timeScale().fitContent();
-       window.addEventListener("resize", () => {
-         chart.resize(window.innerWidth, window.innerHeight);
-       });
-       chart.subscribeClick(function (param) {
-         console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-       });
-       chart.unsubscribeClick(function (param) {
-         // Don’t get notified when a mouse clicks on a chart
-       });
-       chart.subscribeCrosshairMove(function (param) {
-         if (!param.point) {
-           return;
-         }
-         if (param.time) {
-           const volume = param.seriesPrices.get(chart_series_volume)
-           const ohlc = param.seriesPrices.get(chart_series_ohlc)
-           const dateFormat = new Date(param.time * 1000)
-           const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
-           document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
-         } else {
-             console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-         }
-       });
      })();
      {% endfor %}
+      chart.timeScale().fitContent();
+      chart.subscribeClick(function (param) {
+        console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+      });
+      chart.unsubscribeClick(function (param) {
+        // Don’t get notified when a mouse clicks on a chart
+      });
+      chart.subscribeCrosshairMove(function (param) {
+        if (!param.point) {
+          return;
+        }
+        if (param.time) {
+          const volume = param.seriesPrices.get(chart_series_volume)
+          const ohlc = param.seriesPrices.get(chart_series_ohlc)
+          const dateFormat = new Date(param.time * 1000)
+          const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
+          document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
+        } else {
+            console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+        }
+      });
       // Make prices fully visible
       document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
       // Make legend fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px";
+      window.addEventListener("resize", () => {
+        chart.resize(window.innerWidth, window.innerHeight);
+      });
      })();
    </script>
 </body>
@@ -132,13 +132,9 @@ _TEMPLATE = jinja2.Template("""
 """)
 
 _TEMPLATES = jinja2.Template("""
-   <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script> 
    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-   <div id="{{ output_div }}">
-     <div class="lw-attribution">
-       <a href="https://tradingview.github.io/lightweight-charts/">Made By DrJuneMoone</a>
-     </div>
-   </div>
+   <script src="{{ base_url }}lightweight-charts.standalone.production.js"></script>
+   <div id="{{ output_div }}"></div>
    <script type="text/javascript">
      (() => {
      const outputDiv = document.getElementById("{{ output_div }}");
@@ -158,36 +154,25 @@ _TEMPLATES = jinja2.Template("""
        chart_series_{{ series.series_name }}.createPriceLine({{ price_line }});
        {% endfor %}
        this.chart_series_{{ series.series_name }} = chart_series_{{ series.series_name }};
-       chart.timeScale().fitContent();
-       window.addEventListener("resize", () => {
-         chart.resize(window.innerWidth, window.innerHeight);
-       });
-       chart.subscribeClick(function (param) {
-         console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-       });
-       chart.unsubscribeClick(function (param) {
-         // Don’t get notified when a mouse clicks on a chart
-       });
-       chart.subscribeCrosshairMove(function (param) {
-         if (!param.point) {
-           return;
-         }
-         if (param.time) {
-           const volume = param.seriesPrices.get(chart_series_volume)
-           const ohlc = param.seriesPrices.get(chart_series_ohlc)
-           const dateFormat = new Date(param.time * 1000)
-           const dateFormats = dateFormat.getUTCDate() + "/" + (dateFormat.getUTCMonth() + 1) + "/" + dateFormat.getUTCFullYear() + " " + dateFormat.getUTCHours() + ":" + dateFormat.getUTCMinutes() + ":" + dateFormat.getUTCSeconds()
-           document.getElementsByClassName('lw-attribution')[0].innerText = `Time: ${dateFormats} | Open: ${ohlc.open.toFixed(2)} | High: ${ohlc.high.toFixed(2)} | Low: ${ohlc.low.toFixed(2)} | Close: ${ohlc.close.toFixed(2)} | Volume: ${volume}`
-         } else {
-             console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
-         }
-       });
      })();
      {% endfor %}
+      chart.timeScale().fitContent();
+      chart.subscribeClick(function (param) {
+        console.log(`An user clicks at (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+      });
+      chart.unsubscribeClick(function (param) {
+        // Don’t get notified when a mouse clicks on a chart
+      });
+      chart.subscribeCrosshairMove(function (param) {
+        console.log(`A user moved the crosshair to (${param.point.x}, ${param.point.y}) point, the time is ${param.time}`);
+      });
       // Make prices fully visible
       document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(3) > div").style["left"] = "-30px";
       // Make legend fully visible
-      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px"; 
+      document.querySelector("#chart > div > table > tr:nth-child(1) > td:nth-child(2) > div").style["left"] = "-30px";
+      window.addEventListener("resize", () => {
+        chart.resize(window.innerWidth, window.innerHeight);
+      });
      })();
    </script>
 """)
