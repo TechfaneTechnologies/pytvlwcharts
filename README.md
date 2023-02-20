@@ -42,10 +42,9 @@ https://youtu.be/3ncFk_KdZzs
 
 Anchored VWAP [Notebook](https://colab.research.google.com/drive/1ApN2CHWNUZsKNxiqYjpT9glQdwt1c6qN?usp=sharing), [Flask App](https://colab.research.google.com/drive/1w1T2erRjyz3xLkentuIffI75z9kUkN6_?usp=sharing)
 
-![image](https://user-images.githubusercontent.com/96371033/219935938-02c3b00a-9e70-4c24-9aaf-3707cb600357.png)
+![image](https://user-images.githubusercontent.com/96371033/220196000-65690a23-4321-4c9c-9bf5-1426b1ac6b7f.png)
 
-![image](https://user-images.githubusercontent.com/96371033/219936085-bb2ecd35-2041-463b-9b45-2d3e0c3e77dc.png)
-
+![image](https://user-images.githubusercontent.com/96371033/220196166-afcb9fe2-9e7f-4867-9f22-f42834eb27da.png)
 ## License
 
 Licensed under either of
