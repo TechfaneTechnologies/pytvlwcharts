@@ -212,9 +212,6 @@ _TEMPLATES = jinja2.Template("""
        chart.timeScale().fitContent();
      })();
      {% endfor %}
-      window.addEventListener("resize", () => {
-        this.chart.resize(window.innerWidth, window.innerHeight);
-      });
      })();
    </script>
 """)
