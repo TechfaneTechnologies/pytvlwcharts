@@ -194,15 +194,15 @@ class _ChartSpec:
   series: List[_SeriesSpec]
 
 
-def _render(serve: bool,
+def _render(notebook_mode: bool,
             chart: _ChartSpec,
             base_url: str = "https://unpkg.com/lightweight-charts/dist/",
             output_div: str = "vis") -> str:
   """Render a model as html for viewing."""
   return (
-      _TEMPLATE.render(chart=chart, base_url=base_url, output_div=output_div)
-      if serve
-      else _TEMPLATES.render(chart=chart, base_url=base_url, output_div=output_div)
+      _TEMPLATES.render(chart=chart, base_url=base_url, output_div=output_div)
+      if notebook_mode
+      else _TEMPLATE.render(chart=chart, base_url=base_url, output_div=output_div)
   )
 
 
@@ -283,7 +283,7 @@ class Chart:
   """A Lightweight Chart."""
 
   def __init__(self,
-               serve: bool = False,
+               notebook_mode: bool = True,
                data: pd.DataFrame = None,
                width: int = 400,
                height: int = 300,
@@ -304,7 +304,7 @@ class Chart:
     self.options = copy.deepcopy(options) if options else ChartOptions()
     self.series = []
     self._data = data.drop_duplicates(subset=['time']) if data is not None else data
-    self.serve = serve
+    self.notebook_mode = notebook_mode
     # Set Options Overrides.
     self.options.width = width
     self.options.height = height
@@ -389,4 +389,4 @@ class Chart:
                       series=[series._spec() for series in self.series])
 
   def _repr_html_(self):
-    return _render(self.serve, self._spec(), output_div=f'vis-{uuid.uuid4().hex}')
+    return _render(self.notebook_mode, self._spec(), output_div=f'vis-{uuid.uuid4().hex}')
