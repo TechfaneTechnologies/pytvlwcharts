@@ -460,7 +460,7 @@ class ChartOptions(JsonOptions):
   grid: Optional[GridOptions] = None
   handle_scale: Optional[Union[HandleScaleOptions, bool]] = field(default=None, metadata=alias('handleScale'))
   handle_scroll: Optional[Union[HandleScrollOptions, bool]] = field(default=None, metadata=alias('handleScroll'))
-  height: Optional[int] = None
+  height: Optional[Union[int,float,str]] = None
   kinetic_scroll: Optional[KineticScrollOptions] = field(default=None, metadata=alias('kineticScroll'))
   layout: Optional[LayoutOptions] = None
   left_price_scale: Optional[VisiblePriceScaleOptions] = field(default=None, metadata=alias('leftPriceScale'))
@@ -470,4 +470,4 @@ class ChartOptions(JsonOptions):
   right_price_scale: Optional[VisiblePriceScaleOptions] = field(default=None, metadata=alias('rightPriceScale'))
   time_scale: Optional[TimeScaleOptions] = field(default=None, metadata=alias('timeScale'))
   watermark: Optional[WatermarkOptions] = None
-  width: Optional[int] = None
+  width: Optional[Union[int,float,str]] = None
