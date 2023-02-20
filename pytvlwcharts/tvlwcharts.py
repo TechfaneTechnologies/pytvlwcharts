@@ -140,7 +140,7 @@ _TEMPLATE = jinja2.Template("""
           }
           else {
               setTimeout(function () {
-                  setMyFunctionInterval();
+                  setDataUpdateInterval();
               }, (60 - currentDateSeconds) * 1000);
           }
           updateData();
