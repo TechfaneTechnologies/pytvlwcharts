@@ -111,6 +111,8 @@ _TEMPLATE = jinja2.Template("""
         this.chart.resize(window.innerWidth, window.innerHeight);
       });
      })();
+      const data_url = "{{ data_url }}";
+      this.data_url = data_url;
       function updateData() {
           try {
               return axios({
@@ -213,11 +215,12 @@ _TEMPLATES = jinja2.Template("""
      })();
      {% endfor %}
      })();
+       const data_url = "{{ data_url }}";
        function updateData() {
           try {
               return axios({
                       method: 'GET',
-                      url: 'http://127.0.0.1:5000/data',
+                      url: data_url,
                       crossOrigin: '*',
                   })
                   .then(response => {
@@ -270,13 +273,14 @@ class _ChartSpec:
 
 def _render(notebook_mode: bool,
             chart: _ChartSpec,
+            data_url: str = "http://127.0.0.1:5000/data",
             base_url: str = "https://unpkg.com/lightweight-charts/dist/",
             output_div: str = "vis") -> str:
   """Render a model as html for viewing."""
   return (
-      _TEMPLATES.render(chart=chart, base_url=base_url, output_div=output_div)
+      _TEMPLATES.render(chart=chart, data_url=data_url, base_url=base_url, output_div=output_div)
       if notebook_mode
-      else _TEMPLATE.render(chart=chart, base_url=base_url, output_div=output_div)
+      else _TEMPLATE.render(chart=chart, data_url=data_url, base_url=base_url, output_div=output_div)
   )
 
 
@@ -358,6 +362,8 @@ class Chart:
 
   def __init__(self,
                notebook_mode: bool = True,
+               data_url: str = "http://127.0.0.1:5000/data",
+               base_url: str = "https://unpkg.com/lightweight-charts/dist/",
                data: pd.DataFrame = None,
                width: int = 400,
                height: int = 300,
@@ -379,6 +385,8 @@ class Chart:
     self.series = []
     self._data = data.drop_duplicates(subset=['time']) if data is not None else data
     self.notebook_mode = notebook_mode
+    self.data_url = data_url
+    self.base_url = base_url
     # Set Options Overrides.
     self.options.width = width
     self.options.height = height
@@ -463,4 +471,10 @@ class Chart:
                       series=[series._spec() for series in self.series])
 
   def _repr_html_(self):
-    return _render(self.notebook_mode, self._spec(), output_div=f'vis-{uuid.uuid4().hex}')
+    return _render(
+        notebook_mode=self.notebook_mode,
+        chart=self._spec(),
+        data_url=self.data_url,
+        base_url=self.base_url,
+        output_div=f'vis-{uuid.uuid4().hex}'
+    )
