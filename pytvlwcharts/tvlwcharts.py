@@ -448,7 +448,7 @@ class Chart:
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_candlestick(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_candlestick(self, series_name:str = 'ohlc', data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Candlestick series."""
     return self.add(
         Series(chart=self,
@@ -457,7 +457,7 @@ class Chart:
                data=data.drop_duplicates(subset=['time']) if data is not None else self._data,
                **kwargs))
 
-  def mark_histogram(self, series_name:str = None, data: pd.DataFrame = None, **kwargs) -> Series:
+  def mark_histogram(self, series_name:str = 'volume', data: pd.DataFrame = None, **kwargs) -> Series:
     """Add A Histogram Series."""
     return self.add(
         Series(chart=self,
