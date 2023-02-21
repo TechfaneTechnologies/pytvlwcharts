@@ -213,6 +213,41 @@ _TEMPLATES = jinja2.Template("""
      })();
      {% endfor %}
      })();
+       function updateData() {
+          try {
+              return axios({
+                      method: 'GET',
+                      url: 'http://127.0.0.1:5000/data',
+                      crossOrigin: '*',
+                  })
+                  .then(response => {
+                      {% for series in chart.series %}
+                      this.chart_series_{{ series.series_name }}.update(response.data.{{ series.series_name }}[0])
+                      {% endfor %}
+                  })
+          } catch (error) {
+              throw {
+                  code: error.code,
+                  message: error.message,
+                  responseStatus: error.response ? error.status : null,
+                  url: url,
+              };
+          }
+      }
+      function setDataUpdateInterval()
+      {
+          var currentDateSeconds = new Date().getSeconds();
+          if (currentDateSeconds == 0) {
+              setInterval(updateData, 60000);
+          }
+          else {
+              setTimeout(function () {
+                  setDataUpdateInterval();
+              }, (60 - currentDateSeconds) * 1000);
+          }
+          updateData();
+      }
+      setDataUpdateInterval();
    </script>
 """)
 
