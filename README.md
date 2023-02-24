@@ -7,7 +7,7 @@ An Experimental Python Wrapper For [Tradingview's Lightweight-Charts](https://tr
 </p>
 
 ## Instructions on running the program for the first time
-Install The `pytvlwcharts` Library Via `pip install -U git+https://github.com/TechfaneTechnologies/pytvlwcharts.git` And Then Open A Jupyter Notebook Locally or On [Google Colab](https://colab.research.google.com/)
+Install The `pytvlwcharts` Library Via `pip install -U git+https://github.com/TechfaneTechnologies/pytvlwcharts.git` And Then Open A Jupyter Notebook Locally _(With Voila)_ or On [Google Colab](https://colab.research.google.com/) or On Flask Mode.
 
 Please Refer [pytvlwcharts.ipynb](https://github.com/TechfaneTechnologies/pytvlwcharts/blob/main/pytvlwcharts.ipynb) for usage details.
 
