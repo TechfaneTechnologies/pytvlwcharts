@@ -1,5 +1,5 @@
 # Python Tradingview's Lightweight-Charts (pytvlwcharts)
-An Experimental Python Wrapper For [Tradingview's Lightweight-Charts](https://tradingview.github.io/lightweight-charts/) To Be Used In Notebook Environments. [Example Lightweight-Charts](https://codesandbox.io/examples/package/lightweight-charts) 
+An Experimental Python Wrapper For [Tradingview's Lightweight-Charts](https://tradingview.github.io/lightweight-charts/) To Be Used In Notebook Environments (google Colab). [Example Lightweight-Charts](https://codesandbox.io/examples/package/lightweight-charts) 
 
 #### _If You have liked the library, Do Star This Repository and Stay-Up-To-Date_
 <p align="center">
