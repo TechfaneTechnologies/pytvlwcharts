@@ -45,6 +45,10 @@ Anchored VWAP [Notebook](https://colab.research.google.com/drive/1ApN2CHWNUZsKNx
 ![image](https://user-images.githubusercontent.com/96371033/220196000-65690a23-4321-4c9c-9bf5-1426b1ac6b7f.png)
 
 ![image](https://user-images.githubusercontent.com/96371033/220196166-afcb9fe2-9e7f-4867-9f22-f42834eb27da.png)
+
+![image](https://user-images.githubusercontent.com/96371033/221234325-ef7d00de-4c38-4918-9d1d-8426e383302c.png)
+
+
 ## License
 
 Licensed under either of
