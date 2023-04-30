@@ -214,7 +214,6 @@ _TEMPLATES = jinja2.Template("""
        chart.timeScale().fitContent();
      })();
      {% endfor %}
-     })();
        const data_url = "{{ data_url }}";
        function updateData() {
           try {
@@ -251,6 +250,7 @@ _TEMPLATES = jinja2.Template("""
           updateData();
       }
       setDataUpdateInterval();
+     })();
    </script>
 """)
 
